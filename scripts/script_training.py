@@ -7,6 +7,8 @@ from pathlib import Path
 PATH_CSV_ROOT = Path(__file__).resolve().parent.parent
 PATH_CSV = PATH_CSV_ROOT / "data" / "credit_risk_dataset.csv"
 PATH_MODELS = PATH_CSV_ROOT / "models"
+PATH_FEATURES_TEST = Path(__file__).resolve().parent.parent / "data" / "features_test.parquet"
+PATH_TARGET_TEST = Path(__file__).resolve().parent.parent / "data" / "target_test.parquet"
 def entrenar_modelo():
     PATH_MODELS.mkdir(exist_ok=True)
     datos_clientes = pd.read_csv(PATH_CSV)
@@ -33,5 +35,7 @@ def entrenar_modelo():
     pred = (proba >= UMBRAL).astype(int)
     joblib.dump(modelo, PATH_MODELS / "modelo_scoring.joblib")
     joblib.dump(feature_matrix.columns.tolist(), PATH_MODELS / "columnas_dataset.joblib")
+    features_test.to_parquet(PATH_FEATURES_TEST)
+    target_test.to_frame().to_parquet(PATH_TARGET_TEST)
     return modelo
 
