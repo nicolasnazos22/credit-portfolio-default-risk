@@ -30,9 +30,6 @@ def entrenar_modelo():
     
     modelo = xgb.XGBClassifier(n_estimators=100, max_depth=5, learning_rate=0.1, monotone_constraints = monotonic_tuple, eval_metric='logloss', scale_pos_weight=neg/pos, random_state=42)
     modelo.fit(features_training, target_training)
-    proba = modelo.predict_proba(features_test)[:, 1]
-    UMBRAL = 0.20
-    pred = (proba >= UMBRAL).astype(int)
     joblib.dump(modelo, PATH_MODEL / "modelo_scoring.joblib")
     joblib.dump(feature_matrix.columns.tolist(), PATH_MODEL / "columnas_dataset.joblib")
     features_test.to_parquet(PATH_MODEL / "features_test.parquet")
