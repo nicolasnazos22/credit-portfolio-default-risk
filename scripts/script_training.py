@@ -4,13 +4,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 import joblib
 from pathlib import Path
-PATH_CSV_ROOT = Path(__file__).resolve().parent.parent
-PATH_CSV = PATH_CSV_ROOT / "data" / "credit_risk_dataset.csv"
-PATH_MODELS = PATH_CSV_ROOT / "models"
-PATH_FEATURES_TEST = Path(__file__).resolve().parent.parent / "data" / "features_test.parquet"
-PATH_TARGET_TEST = Path(__file__).resolve().parent.parent / "data" / "target_test.parquet"
+from script_preprocesado import preprocesar
+PATH_ROOT = Path(__file__).resolve().parent.parent
+PATH_DATA = PATH_ROOT / "data"
+PATH_CSV = PATH_DATA / "credit_risk_dataset.csv"
+PATH_MODEL = PATH_ROOT / "model"
 def entrenar_modelo():
-    PATH_MODELS.mkdir(exist_ok=True)
+    PATH_MODEL.mkdir(exist_ok=True)
     datos_clientes = pd.read_csv(PATH_CSV)
     data_frame_clientes_preprocesado = preprocesar(datos_clientes)
     feature_matrix = data_frame_clientes_preprocesado.drop('loan_status', axis=1)
@@ -33,9 +33,10 @@ def entrenar_modelo():
     proba = modelo.predict_proba(features_test)[:, 1]
     UMBRAL = 0.20
     pred = (proba >= UMBRAL).astype(int)
-    joblib.dump(modelo, PATH_MODELS / "modelo_scoring.joblib")
-    joblib.dump(feature_matrix.columns.tolist(), PATH_MODELS / "columnas_dataset.joblib")
-    features_test.to_parquet(PATH_FEATURES_TEST)
-    target_test.to_frame().to_parquet(PATH_TARGET_TEST)
+    joblib.dump(modelo, PATH_MODEL / "modelo_scoring.joblib")
+    joblib.dump(feature_matrix.columns.tolist(), PATH_MODEL / "columnas_dataset.joblib")
+    features_test.to_parquet(PATH_MODEL / "features_test.parquet")
+    target_test.to_frame().to_parquet(PATH_MODEL / "target_test.parquet")
     return modelo
-
+if __name__ == "__main__":
+    entrenar_modelo()
