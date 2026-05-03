@@ -9,7 +9,7 @@ from datetime import datetime
 import json
 MODEL_PATH = Path(__file__).resolve().parent.parent / "model"
 from app.schemas import Metricas
-UMBRAL = 0.20
+UMBRAL = 0.50
 def evaluacion_modelo():
     modelo = joblib.load(MODEL_PATH / "modelo_scoring.joblib")
     features_test = pd.read_parquet(MODEL_PATH / "features_test.parquet")

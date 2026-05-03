@@ -1,0 +1,10 @@
+# Schemas
+* Defini explícitamente el contrato entre el cliente y la api base model de pydantic (mediante schemas) de forma que cada request contenga todos los campos necesarios (y con formato correcto) para realizar la inferencia.
+* La importancia de los schemas en python radica en el hecho de su sistema dinámico de tipos: las type hints de pydantic agregan una capa de validación estricta en tiempo de ejecución, asegurando que cada tipo respete tipo y dominio esperados. En caso contrario será rechazado.
+* Siguiendo principios de Domain Driven Design utilicé tipos enum con nombres alineados al dominio, acotando sus posibles valores a subconjuntos válidos. También restringí los campos númericos a rangos lógicos coherentes con el problema.
+* Esta es la forma de evitar problemas de parsing e inconsistencias en la lógica del negocio, asegurando que el modelo realice la inferencia sobre datos válidos.
+* El enfoque *fail fast* que habilitan los schemas es importante para prevenir la propagación de datos inválidos que puedan llegar a contaminar decisiones de negocio. Es mejor rechazar una request que aceptar una con datos inconsistentes que deriven en scoring erróneo.
+* Refactor: saqué lógica de negocio del schema. El etiquetado pasó a ScoringService, que es donde debe estar la lógica de negocio.
+* A su vez la configuracion de umbrales fue movida a un archivo config siguiendo el principio III de *the twelve factor app* y delegada a un objeto BaseSettings. Éste permite definir los umbrales de calificación usando variables de entorno. En caso de no haber archivo .env se puede especificar valores default. [para mas info](https://12factor.net/config) 
+* Refactor 2: Añadí explicabilidad a la respuesta a la request de cálculo de riesgo. Armo un diccionario con las 3 features más influyentes en la predicción, calculadas a partir del aporte de cada una al output. 
+* Decidí devolver valores con decimales para preservar precisión en la magnitud del impacto de cada feature, facilitando una interpretación cuantitativa más fiel del modelo.
