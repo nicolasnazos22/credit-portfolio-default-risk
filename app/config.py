@@ -11,4 +11,9 @@ class RiskConfig(BaseSettings):
     )
     class Config:
         env_prefix = "RISK_"
-        env_prefix = "EXPLAINABILITY_FEATURES"
+
+class ProcessingConfig(BaseSettings):
+    limite_edad: int = 90
+    limite_exp: int = 60
+    class Config:
+        env_prefix = "PREPROCESS_"

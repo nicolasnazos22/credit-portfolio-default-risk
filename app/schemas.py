@@ -29,7 +29,7 @@ class CbDefaultOnFile(str, Enum):
 
 class CreditRiskRequest(BaseModel):
     person_age: Annotated[int, Field(ge=18, le=100)]
-    person_income: Annotated[int, Field(ge=10000, description="ingreso anual en USD")]
+    person_income: Annotated[int, Field(ge=10000, le=1000000 description="ingreso anual en USD")]
     person_home_ownership: HomeOwnership
     person_emp_length: Annotated[float, Field(ge=0, le=60, description="años de empleo")]
     loan_intent: LoanIntent
@@ -39,6 +39,15 @@ class CreditRiskRequest(BaseModel):
     loan_percent_income: Annotated[float, Field(ge=0.0, le=1.0, description="ratio monto solicitado/ingresos anuales")]
     cb_person_cred_hist_length: Annotated[int, Field(ge=0, le=60, description="historial crediticio en años")]
     cb_person_default_on_file: CbDefaultOnFile
+    @model_validator(mode="after")
+    def logica_negocio_valida():
+        edad_laboral = self.person_age - 16
+        if self.person_emp_length > edad_laboral:
+            raise ValueError("la experiencia laboral no puede ser superior a edad-16")
+        if self.cb_person_cred_hist_length > edad_laboral-2:
+            raise ValueError("No es posible pedir credito antes de los 18")
+        return self
+
 
 class CreditRiskResponse(BaseModel):
     probabilidad_default: Annotated[float, Field(ge=0.0, le=1.0, description="probabilidad inferida de caer en default")]
@@ -46,7 +55,7 @@ class CreditRiskResponse(BaseModel):
     etiqueta_riesgo: Annotated[str, Field(description = "BAJA, MEDIA, ALTA")]
     explicacion: Annotated[dict[str, float], Field(description="valores shap: atributos del cliente y su impacto en la prediccion")]
     @classmethod
-    def armar_respuesta(cls, probabilidad_default: float, etiqueta: str, prediccion_default: int, explicacion: dict(str, float)) -> "CreditRiskResponse":
+    def armar_respuesta(cls, probabilidad_default: float, etiqueta: str, prediccion_default: int, explicacion: dict[str, float]) -> "CreditRiskResponse":
         return cls(
             probabilidad_default = round(probabilidad_default, 4),
             default_prediccion = prediccion_default,
@@ -89,4 +98,5 @@ class Metricas(BaseModel):
     recall_default: Annotated[float, Field(ge=0.0, le=1.0, description="sensibilidad sobre la clase default")]
     precision_default: Annotated[float, Field(ge=0.0, le=1.0, description="precision de deteccion de defaults")]
     pr_auc: Annotated[float, Field(ge=0.0, le=1.0, description="area bajo la curva precision-recall")]
+
 
