@@ -1,16 +1,23 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent / "app"))
 import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 import joblib
-from pathlib import Path
 from preprocessor import Preprocessor
 from config import ProcessingConfig
-from logging import getLogger
+from validador import Validador
+from logging import getLogger, basicConfig, INFO
+import yaml
+
 PATH_ROOT = Path(__file__).resolve().parent.parent
+PATH_YAML = PATH_ROOT / "app" / "reglas_validacion.yaml.txt"
 PATH_DATA = PATH_ROOT / "data"
 PATH_CSV = PATH_DATA / "credit_risk_dataset.csv"
 PATH_MODEL = PATH_ROOT / "model"
+
 def entrenar_modelo():
     PATH_MODEL.mkdir(exist_ok=True)
     log_metricas = getLogger(__name__)
@@ -20,7 +27,10 @@ def entrenar_modelo():
     )
     medianas = datos_training_crudos.select_dtypes(include="number").median() #calculo la mediana que voy a usar para imputar despues de hacer el split para prevenir data leakage
     config = ProcessingConfig()
-    preprocessor = Preprocessor.para_entrenamiento(medianas=medianas, config=config)
+    with open(PATH_YAML) as f:
+        reglas = yaml.safe_load(f)
+    validador = Validador(atributos=reglas)
+    preprocessor = Preprocessor.para_entrenamiento(medianas=medianas, config=config, validador=validador)
     training_transformado = preprocessor.transformar(datos_training_crudos)
     feature_matrix = training_transformado.drop('loan_status', axis=1)
     target_training  = training_transformado['loan_status']
@@ -29,9 +39,9 @@ def entrenar_modelo():
         medianas=medianas,
         config=config
     )
-    test_transformado = preprocessor_inferencia.transformar(datos_test_crudos)
-    features_test = test_transformado.drop("loan_status", axis=1)
-    target_test = test_transformado["loan_status"]
+    target_test = datos_test_crudos["loan_status"].reset_index(drop=True)
+    datos_test_sin_target = datos_test_crudos.drop("loan_status", axis=1)
+    features_test = preprocessor_inferencia.transformar(datos_test_sin_target)
 
     constraints = {
     'person_income': -1,
@@ -47,8 +57,11 @@ def entrenar_modelo():
     
     modelo = xgb.XGBClassifier(n_estimators=100, max_depth=5, learning_rate=0.1, monotone_constraints = monotonic_tuple, eval_metric='logloss', scale_pos_weight=neg/pos, random_state=42)
     modelo.fit(feature_matrix, target_training)
-    predicciones_test = modelo.predict(features_test)
-    log_metricas.info("Metricas evaluacion modelo \n%s ", classification_report(target_test, predicciones_test))
+    predicciones_test = modelo.predict_proba(features_test)[:,1]
+    predicciones_test = (predicciones_test >= 0.4).astype(int)
+    reporte = classification_report(target_test, predicciones_test)
+    with open(PATH_MODEL / "metricas_evaluacion.txt", "w") as f:
+        f.write(reporte)
     joblib.dump(modelo, PATH_MODEL / "modelo_scoring.joblib")
     joblib.dump(feature_matrix.columns.tolist(), PATH_MODEL / "columnas_dataset.joblib")
     joblib.dump(medianas, PATH_MODEL / "medianas.joblib")
@@ -56,5 +69,6 @@ def entrenar_modelo():
     features_test.to_parquet(PATH_MODEL / "features_test.parquet")
     target_test.to_frame().to_parquet(PATH_MODEL / "target_test.parquet")
     return modelo
+
 if __name__ == "__main__":
     entrenar_modelo()
