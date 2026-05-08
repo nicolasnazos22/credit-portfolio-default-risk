@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from enum import Enum
 from typing import Annotated
 from datetime import datetime
@@ -29,7 +29,7 @@ class CbDefaultOnFile(str, Enum):
 
 class CreditRiskRequest(BaseModel):
     person_age: Annotated[int, Field(ge=18, le=100)]
-    person_income: Annotated[int, Field(ge=10000, le=1000000 description="ingreso anual en USD")]
+    person_income: Annotated[int, Field(ge=10000, le=1000000, description="ingreso anual en USD")]
     person_home_ownership: HomeOwnership
     person_emp_length: Annotated[float, Field(ge=0, le=60, description="años de empleo")]
     loan_intent: LoanIntent
@@ -40,7 +40,7 @@ class CreditRiskRequest(BaseModel):
     cb_person_cred_hist_length: Annotated[int, Field(ge=0, le=60, description="historial crediticio en años")]
     cb_person_default_on_file: CbDefaultOnFile
     @model_validator(mode="after")
-    def logica_negocio_valida():
+    def logica_negocio_valida(self):
         edad_laboral = self.person_age - 16
         if self.person_emp_length > edad_laboral:
             raise ValueError("la experiencia laboral no puede ser superior a edad-16")

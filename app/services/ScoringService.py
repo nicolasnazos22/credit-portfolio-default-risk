@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 from app.schemas import CreditRiskResponse
 from app.config import RiskConfig
-from app.preprocessor import Preprocessor  # <-- Agregado fundamental
+from app.preprocessor import Preprocessor
 import shap as sh
 
 class ScoringService:

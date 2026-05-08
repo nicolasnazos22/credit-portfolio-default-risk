@@ -1,14 +1,14 @@
 import sys
 from pathlib import Path
-sys.path.append(str(Path(__file__).resolve().parent.parent / "app"))
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 import joblib
-from preprocessor import Preprocessor
-from config import ProcessingConfig
-from validador import Validador
+from app.preprocessor import Preprocessor
+from app.config import ProcessingConfig
+from app.validador import Validador
 from logging import getLogger, basicConfig, INFO
 import yaml
 
