@@ -8,3 +8,4 @@
 * 2. **memoria y tipado:** aseguro que el tipo final de las variables sea float32, pensando en volúmenes grandes de datos. Usar inmutabilidad, es decir deep= true está relacionado con evitar efectos colaterales. El tradeoff que asumo es mayor uso de memoria para garantizar determinismo de la transformación.
 * 3. Modifiqué el script monolítico inicial en favor de funciones puras, de manera tal que el property based testing de las distintas etapas del pipeline sea natural.
 * 4. El determinismo del pipeline permite que el algoritmo SHAP sea más consistente. La explicación de SHAP no va a depender entonces de transformaciones inconsistentes del preprocesamiento.
+* 5. Movi la logica de limpieza a un objeto separado, validador. Para más detalles leer journal-validador.
