@@ -58,7 +58,7 @@ def entrenar_modelo():
     modelo = xgb.XGBClassifier(n_estimators=100, max_depth=5, learning_rate=0.1, monotone_constraints = monotonic_tuple, eval_metric='logloss', scale_pos_weight=neg/pos, random_state=42)
     modelo.fit(feature_matrix, target_training)
     predicciones_test = modelo.predict_proba(features_test)[:,1]
-    predicciones_test = (predicciones_test >= 0.4).astype(int)
+    predicciones_test = (predicciones_test >= config.umbral_decision).astype(int)
     reporte = classification_report(target_test, predicciones_test)
     with open(PATH_MODEL / "metricas_evaluacion.txt", "w") as f:
         f.write(reporte)

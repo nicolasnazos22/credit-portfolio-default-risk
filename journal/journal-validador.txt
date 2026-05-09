@@ -5,3 +5,8 @@
 * El diseño del validador se basa en el uso de un patrón llamado [dispatch tables](https://tomarcher.io/posts/python-dispatch-maps/), donde en lugar de usar branching, es decir if-else mapeo operaciones a funciones lambda. Esto funciona porque las funciones estan agrupadas por firma. Las que tienen la misma firma comparten el mismo diccionario.
 * Por otro lado es importante decir que estas reglas de validacion se ejecutan usando pandas/numpy, lo que permite al interprete de python recurrir a optimizaciones de bajo nivel que realizan procesamiento vectorizado de datos.
 * Además se desacoplan las reglas de negocio siguiendo el principio 3 de 12-factor app y ahora se las lee de un archivo YAML. Esto permite que perfiles funcionales puedan editar el yaml directamente, y en caso de necesitar alguna función extra de validación el dev encargado deberá sencillamente agregar una entrada al diccionario correspondiente.
+* Refactor:
+* 1. Dispatch table ahora mapea directamente a las claves del YAML.
+* 2. Ingreso y monto de credito deben ser mayores a 0, en consecuencia lo reflejo en el YAML para modelar más certeramente la lógica del negocio.
+* 3. Por cuestiones de legibilidad decidí quitar el walrus operator := y usar una list comprehension con filtro. Esto es, a su vez, más pythonico.
+* 4. Notemos que antes el código que verificaba edad y antigüedad laboral era código muerto: las claves mayor_igual, menor_igual no mapeaban a las claves del yaml. Necesité hacer este refactor para alinearlos y permitir de esta manera que ambas validaciones fueran ejecutadas.
