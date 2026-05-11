@@ -60,7 +60,8 @@ def cliente_valido(draw):
         if reglas.get("relation"): #una vez generados procedo con los que tienen dependencia. Modelando este problema de dependencias como un grafo aciclico o DAG 
         #la generacion de valores va a estar completamente desacoplada del orden de los campos del YAML, es decir de las reglas de negocio. Es decir instancio primero los que tienen in degree = 0
         #despues los que tienen in degree = 1
-            payload[campo] = draw(estrategia_para_campo(reglas, payload)) #aclaracion: estoy asumiendo que el arbol de dependencias tiene maximo 1 nodo hijo
+            payload[campo] = draw(estrategia_para_campo(reglas, payload)) #aclaracion: esto funciona para dependencias simples, no asi para grafos aciclicos de profundidad aleatoria. Para eso hay que vigilar
+            #las dependencias que aparecen en el YAML y controlar el orden de instanciación mediante un topological sort o algoritmo de Kahn
             
     return payload
 
