@@ -1,12 +1,15 @@
+fields:
   person_age:
     required: true
     min: 18
-    max: 80
+    max: 100
+    dtype: int
 
   person_emp_length:
     required: true
     min: 0
-    max: 40
+    max: 60
+    dtype: float
     relation:
       type: menor_o_igual
       field: person_age
@@ -14,20 +17,54 @@
 
   person_income:
     required: false
-    mayor: 0
+    min: 10000
+    max: 1000000
+    dtype: int
 
   loan_amnt:
     required: false
-    mayor: 0
+    min: 1000
+    max: 50000
+    dtype: int
 
   loan_int_rate:
     required: false
-    min: 0
+    min: 5.0
+    max: 25.0
+    dtype: float
 
   loan_percent_income:
     required: false
-    min: 0
+    min: 0.0
+    max: 1.0
+    dtype: float
 
   cb_person_cred_hist_length:
     required: false
     min: 0
+    max: 60
+    dtype: int
+    relation:
+      type: menor_o_igual
+      field: person_age
+      offset: -18
+
+  person_home_ownership:
+    required: true
+    categorico: true
+    valores: [RENT, OWN, MORTGAGE, OTHER]
+
+  loan_intent:
+    required: true
+    categorico: true
+    valores: [PERSONAL, EDUCATION, HOMEIMPROVEMENT, DEBTCONSOLIDATION, MEDICAL, VENTURE]
+
+  loan_grade:
+    required: true
+    categorico: true
+    valores: [A, B, C, D, E, F, G]
+
+  cb_person_default_on_file:
+    required: true
+    categorico: true
+    valores: [Y, N]
