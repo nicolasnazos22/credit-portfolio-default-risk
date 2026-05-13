@@ -4,10 +4,6 @@ import numpy as np
 # reglas de validacion codificadas en dispatch table
 # para evitar branching innecesario
 
-import numpy as np
-import pandas as pd
-
-
 REGLAS_VALIDACION_INDIVIDUAL = {
     "min": lambda clientes, feature, valor: clientes[feature] >= valor,
     "max": lambda clientes, feature, valor: clientes[feature] <= valor,
