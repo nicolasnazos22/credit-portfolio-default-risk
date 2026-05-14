@@ -6,3 +6,20 @@
 * Esto es importante para el negocio debido a que mostrar exactamente dónde ocurre el conflicto es tan importante como detectarlo.
 * Decidí traducir el algoritmo entero a lenguaje de negocio para que incluso el reporte sea fácilmente comprendido por perfiles no técnicos y el desacople entre ambas áreas sea real.
 * La limitación a resolver de este algoritmo es que no detecta dependencias circulares equivalentes detectadas en distinto orden. Eso queda como TODO.
+* Revisando el código nuevamente detecto un problema a corregir en el algoritmo. El dependencias_cadena.index es O(n) en complejidad, en consecuencia no escala bien. el refactor propuesto es cambiar la lista por un diccionario. Así la consulta tendrá complejidad O(1)
+* Ahora implementé un filtro para eliminar ciclos repetidos.
+* Notemos que el YAML actual no tiene dependencias circulares, dado que lo implementé yo de esa manera, pero eso no garantiza que en el futuro no vaya a existir ese problema. El analista funcional es quien modela las reglas del negocio y no se puede confiar en su conocimiento técnico.
+* La premisa fundamental en la que se basa el filtro es que los ciclos no tienen comienzo ni fin.
+Por ejemplo: si A depende de B y B depende de A, entonces el conflicto puede detectarse como A-B-A o como B-A-B dependiendo de qué nodo haya sido el punto de partida del DFS.
+* El analista precisa conocer solamente un conflicto y no sus “versiones rotadas”, que no representan conflictos distintos sino distintas perspectivas del mismo ciclo de dependencias.
+* Ahora, el algoritmo del filtro, para cada conflicto detectado, es simple:
+* 1. "Normalizo" el ciclo, es decir, elimino el último elemento. A-B-A pasa a ser A-B
+* 2. Después "roto" el ciclo, de manera tal que el primer elemento del mismo (en orden lexicográfico) esté en el comienzo.
+* 3. Al final transformo al ciclo ya normalizado en una tupla y la almaceno en un set. Detengámosnos un poco más en este último paso:
+* * 1. La decisión de usar tuplas y sets no es casual. Tomé esta decisión en base al análisis de distintas alternativas, de acuerdo a la cantidad de operaciones que realiza cada una y a las propiedades de cada estructura de datos.
+* * 2. En primer lugar notemos que las tuplas son inmutables, y que además son estructuras que el intérprete de python puede representar internamente como valores numéricos (proceso que se conoce como hashing). Al ser inmutable esa representación jamás va a variar.
+* * 3. En segundo lugar, los sets almacenan internamente esos hashes y permiten realizar exactamente una sola comparación para verificar si el hash de la tupla está contenido en el set.
+* * 4. En consecuencia para el intérprete de python el costo computacional de revisar pertenencia es muy bajo. Esta decisión escala muy bien y permite validar YAML con miles de dependencias en muy poco tiempo, minimizando el tiempo dedicado por el analista a esta tarea.
+# TO DO:
+* 1. agregar exportación de reportes PDF en la próxima iteración.
+* 2. agregar endpoint de FASTAPI para que el analista pueda validar su YAML desde interfaz web, sin depender de scripts offline.
