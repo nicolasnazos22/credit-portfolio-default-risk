@@ -20,6 +20,7 @@ Por ejemplo: si A depende de B y B depende de A, entonces el conflicto puede det
 * * 2. En primer lugar notemos que las tuplas son inmutables, y que además son estructuras que el intérprete de python puede representar internamente como valores numéricos (proceso que se conoce como hashing). Al ser inmutable esa representación jamás va a variar.
 * * 3. En segundo lugar, los sets almacenan internamente esos hashes y permiten realizar exactamente una sola comparación para verificar si el hash de la tupla está contenido en el set.
 * * 4. En consecuencia para el intérprete de python el costo computacional de revisar pertenencia es muy bajo. Esta decisión escala muy bien y permite validar YAML con miles de dependencias en muy poco tiempo, minimizando el tiempo dedicado por el analista a esta tarea.
-# TO DO:
-* 1. agregar exportación de reportes PDF en la próxima iteración.
-* 2. agregar endpoint de FASTAPI para que el analista pueda validar su YAML desde interfaz web, sin depender de scripts offline.
+## Refactor
+* Agregué un formateador sencillo que arma un gran string con todas las dependencias circulares encontradas.
+* A su vez también agregué un script sencillo que arma el pdf que el analista va a descargar. Usé formato sencillo para facilitar la lectura y debugging en caso de haber problemas.
+* Queda pendiente el endpoint de FastApi y el correspondiente schema.
