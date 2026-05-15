@@ -24,3 +24,15 @@ Por ejemplo: si A depende de B y B depende de A, entonces el conflicto puede det
 * Agregué un formateador sencillo que arma un gran string con todas las dependencias circulares encontradas.
 * A su vez también agregué un script sencillo que arma el pdf que el analista va a descargar. Usé formato sencillo para facilitar la lectura y debugging en caso de haber problemas.
 * Queda pendiente el endpoint de FastApi y el correspondiente schema.
+## Refactor 2
+* Decidi que el debugging sea offline. Por eso implementé un script wrapper sencillo que toma de línea de comando un nombre de archivo yaml y luego lo carga y ejecuta el debugger.
+* En caso de no haber dependencias circulares se muestra un mensaje "ok" en pantalla.
+* Si se encuentra algún problema se exporta pdf con los conflictos.
+* Corregido return de diagnostico_reglas_conflicto, ahora devuelve los conflictos sin repetir, tal como tenía previsto.
+## Complejidad
+* La complejidad del algoritmo está dominada por el DFS, que realiza una cantidad teórica de operaciones proporcional a la cantidad de vértices (campos en este caso) y aristas (las dependencias en este caso). Es decir O(cantidad de vértices+cantidad de aristas).
+* Notemos que como cada campo tiene exactamente una dependencia como máximo entonces la cantidad de aristas del grafo puede ser, a lo sumo, V vértices. Entonces la complejidad es O(V) directamente, es decir, en peor caso este código realiza una cantidad de operaciones directamente proporcional a la cantidad de campos del YAML.
+## A observar
+* El stack en python tiene límite de elementos, vale la pena pensar una implementación iterativa para optimizar la complejidad espacial del stack de llamadas. La implementación iterativa evita sobrecargar el stack 
+* El debugger en este momento presume la existencia de una sola dependencia.
+* El YAML se emplea para la generación automática de clientes para testing con hypothesis. Notemos que esto es completamente diferente de la inferencia. Ahora, es vital entender que debe implementarse un sanity check para asegurar que el yaml contiene exactamente los mismos campos que el dataset usado para entrenar el modelo.

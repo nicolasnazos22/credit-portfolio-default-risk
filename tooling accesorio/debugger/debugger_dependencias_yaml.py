@@ -1,6 +1,6 @@
 from typing import Optional
 
-def diagnostico_reglas_conflicto(reglas: dict) -> Optional[str]:
+def diagnostico_reglas_conflicto(reglas: dict) -> Optional[list]:
     dependencias_campos = {
         campo: [] for campo in reglas
     }
@@ -51,15 +51,14 @@ def diagnostico_reglas_conflicto(reglas: dict) -> Optional[str]:
         dependencias_cadena.pop()
         diccionario_posiciones.pop(campo_actual)
 
-    # Aca exploro todos los campos. El DFS explora básicamente las dependencias conectadas a un solo campo (lo que se conoce como componente conexa en teoría de grafos), de esta manera recorro el espacio muestral de campos completos. 
-    # En lenguaje financiero: acá garantizo que las relaciones de todos los campos sean exploradas
+    # Aca corro DFS sobre todos los campos para cubrir todas las componentes no conexas del grafo.
     for campo in dependencias_campos:
         if campo not in campos_visitados:
             rastreo_reglas_conflicto(campo)
     conflictos_sin_repetir =  eliminar_conflictos_repetidos(reglas_conflictivas_detectadas) 
     if not reglas_conflictivas_detectadas:
         return None
-    return reglas_conflictivas_detectadas
+    return conflictos_sin_repetir
 
 
 
