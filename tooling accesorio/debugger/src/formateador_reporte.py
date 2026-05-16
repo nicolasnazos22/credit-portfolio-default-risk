@@ -7,7 +7,7 @@ def formatear_reporte(conflictos: list) -> str:
         documento.append(f"Conflicto #{nro_conflicto}:")
         for nro_dependencia in range(len(conflicto) - 1):
             documento.append(
-                f"  - '{conflicto[nro_dependencia]}' depende de'{conflicto[nro_dependencia + 1]}'."
+                f"  - '{conflicto[nro_dependencia]}' depende de' {conflicto[nro_dependencia + 1]}'."
             )
         documento.append("")
 
