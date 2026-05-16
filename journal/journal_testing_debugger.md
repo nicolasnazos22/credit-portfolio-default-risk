@@ -1,0 +1,8 @@
+# Testing del Debugger
+* Elegí unit testing sobre property-based testing porque el dominio del problema está bien acotado: detección de ciclos en un grafo dirigido derivado de campos en YAML.
+* Los casos de prueba que elegí cubren los casos clave del problema: diccionario sin campos, dependencia circular simple, múltiples dependencias no circulares y dependencias circulares que no empiezan en el primer nodo explorado.
+* Con estos casos puedo reducir notablemente el riesgo de que el debugger se rompa en producción, dado que éstos son los errores más comunes en configuración de campos. A su vez valido que todas las piezas del debugger cumplan con su objetivo:
+* 1. Eliminación de nodos (propiedades) no pertenecientes al ciclo, dado que no deberían ser el foco del problema.
+* 2. Recorrido completo de todas las propiedades que conforman el grafo.
+* Como mi objetivo principal es que el diagnóstico de bugs en el debugger sea determinista preferí especificar casos puntuales antes que privilegiar la generación de casos aleatorios. De esta manera mantengo el control del espacio muestral explorado por mis casos de prueba, evitando desperdiciar tiempo en combinaciones no representativas del dominio del problema resuelto.
+* Como agregado me gustaría mencionar que además hypothesis requiere una estructura clara para generar los casos de prueba, y el espacio de búsqueda en el caso del grafo es bastante más complejo de lo que realmente se necesita. Es suficiente, por lo tanto, escribir los casos de prueba más realistas para el problema. 

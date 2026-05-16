@@ -10,7 +10,7 @@ def diagnostico_reglas_conflicto(reglas: dict) -> Optional[list]:
         if relacion:
             dependencias_campos[campo].append(relacion["field"]) #armo grafo usando diccionario+listas de adyacencia para modelar relaciones.
             if relacion["field"] not in dependencias_campos:
-                dependencias_campos[relacion["field"]] = [] 
+                dependencias_campos[relacion["field"]] = []
 
     campos_visitados = set()
     campos_en_proceso = set()
