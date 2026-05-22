@@ -1,7 +1,7 @@
 import sys
-from debuggear_dependencias_yaml import diagnostico_reglas_conflicto
-from formateador_reporte import formatear_reporte
-from exportar_pdf import exportar_reporte_a_pdf
+from .debugger_dependencias_yaml import diagnostico_reglas_conflicto
+from .formateador_reporte import formatear_reporte
+from .exportar_pdf import exportar_reporte_a_pdf
 import yaml
 
 def run(nombre_yaml: str) -> None:
@@ -14,6 +14,7 @@ def run(nombre_yaml: str) -> None:
         return
 
     reglas_formateadas = formatear_reporte(reglas_debuggeadas)
+    print(reglas_formateadas)
     exportar_reporte_a_pdf(reglas_formateadas)
 
 if __name__ == "__main__":

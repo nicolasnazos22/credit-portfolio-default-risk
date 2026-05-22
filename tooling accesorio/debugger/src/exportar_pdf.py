@@ -1,27 +1,33 @@
-from fpdf import FPDF
+import textwrap
 from datetime import datetime
+from fpdf import FPDF
 
-def exportar_reporte_a_pdf(
-    texto_reporte: str,
-    ruta_salida: str = "reporte_dependencias_circulares.pdf"
-):
+def exportar_reporte_a_pdf(texto_reporte: str, ruta_salida: str = "reporte_dependencias_circulares.pdf"):
     pdf = FPDF()
     pdf.add_page()
-    fecha_actual = datetime.now().strftime("%d/%m/%Y %H:%M")
-
+    
     pdf.set_font("helvetica", "B", 12)
-    pdf.cell(0, 10, "Reporte de validacion YAML", new_x="LMARGIN", new_y="NEXT")
-
+    pdf.cell(0, 10, "Reporte de validación YAML", new_x="LMARGIN", new_y="NEXT")
+    
     pdf.set_font("helvetica", size=10)
-    pdf.cell(0, 8, f"fecha de validacion: {fecha_actual}", new_x="LMARGIN", new_y="NEXT")
-
+    fecha = datetime.now().strftime("%d/%m/%Y %H:%M")
+    pdf.cell(0, 8, f"Fecha de validación: {fecha}", new_x="LMARGIN", new_y="NEXT")
     pdf.ln(5)
+    texto_limpio = texto_reporte.replace('\t', '    ')
 
-    for linea in texto_reporte.split("\n"):
-        if linea.startswith("Conflicto #"):
-            pdf.set_font("helvetica", "B", 11)
-        else:
-            pdf.set_font("helvetica", size=11)
-        pdf.multi_cell(0, 6, linea)
+    for linea in texto_limpio.splitlines():
+        linea = linea.strip()
+
+        if not linea:
+            pdf.ln(2)
+            continue
+
+        estilo = "B" if linea.startswith("Conflicto #") else ""
+        pdf.set_font("helvetica", style=estilo, size=11)
+    
+        tramos = textwrap.wrap(linea, width=90, break_long_words=True)
+        
+        for tramo in tramos:
+            pdf.cell(0, 6, txt=tramo, new_x="LMARGIN", new_y="NEXT") 
 
     pdf.output(ruta_salida)
