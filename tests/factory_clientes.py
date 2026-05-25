@@ -2,6 +2,7 @@ from pathlib import Path
 import numpy as np
 from hypothesis import strategies as st
 from hypothesis.strategies import composite
+import yaml
 PATH_YAML = Path(__file__).resolve().parent.parent / "app" / "reglas_validacion.yaml.txt"
 with open(PATH_YAML) as f:
     REGLAS = yaml.safe_load(f)["fields"]
@@ -23,6 +24,8 @@ def estrategia_numerica(reglas, payload):
         campo_base = relacion["field"]
         offset = relacion.get("offset", 0)
         max_val = min(max_val, payload[campo_base] + offset)
+        if max_val < min_val:
+            max_val = min_val #programacion defensiva minima para no tener un rango invalido
         
     if reglas.get("dtype") == "float":
         return st.floats(

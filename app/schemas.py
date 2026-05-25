@@ -88,7 +88,7 @@ class PortfolioRiskSimulationResponse(BaseModel):
     @classmethod
     def armar_respuesta(cls, simulaciones: int, var_95: int, cvar_95: int) -> "PortfolioRiskSimulationResponse":
         return cls(
-            cantidad_simulaciones=resultados.size,
+            cantidad_simulaciones=simulaciones,
             var_95=float(var_95),
             cvar_95=float(cvar_95),
     )
