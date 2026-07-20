@@ -43,9 +43,9 @@ def diagnostico_reglas_conflicto(reglas: dict) -> list:
                 
             elif campo_requerido in campos_en_proceso: #aca detecte una backedge, es decir una dependencia circular
                 inicio_ciclo = diccionario_posiciones[campo_requerido]
-                ciclo_dependencia_circular = (dependencias_cadena[inicio_ciclo:] + [campo_requerido]
+                ciclo_dependencia_circular = dependencias_cadena[inicio_ciclo:] + [campo_requerido]
                 reglas_conflictivas_detectadas.append(ciclo_dependencia_circular)
-)
+
         
         campos_en_proceso.remove(campo_actual) #aca saco el campo actual del stack de resolución y sigo explorando las dependencias de ese campo.
         dependencias_cadena.pop()

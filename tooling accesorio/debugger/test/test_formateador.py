@@ -9,5 +9,5 @@ def test_contenido_reportes():
     campos = ["a", "b", "c", "d"]
     
     assert isinstance(reporte, str)
-    assert reporte.count("conflicto ") == 2
+    assert reporte.count("Conflicto ") == 2
     assert all(campo in reporte for campo in campos)

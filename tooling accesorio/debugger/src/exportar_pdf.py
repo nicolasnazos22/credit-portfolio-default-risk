@@ -2,7 +2,7 @@ import textwrap
 from datetime import datetime
 from fpdf import FPDF
 
-def exportar_reporte_a_pdf(texto_reporte: str, ruta_salida: str = "reporte_dependencias_circulares.pdf"):
+def exportar_reporte_a_pdf(texto_a_escribir: str, ruta_guardado: str = "reporte_dependencias_circulares.pdf"):
     pdf = FPDF()
     pdf.add_page()
     
@@ -13,7 +13,7 @@ def exportar_reporte_a_pdf(texto_reporte: str, ruta_salida: str = "reporte_depen
     fecha = datetime.now().strftime("%d/%m/%Y %H:%M")
     pdf.cell(0, 8, f"Fecha de validación: {fecha}", new_x="LMARGIN", new_y="NEXT")
     pdf.ln(5)
-    texto_limpio = texto_reporte.replace('\t', '    ')
+    texto_limpio = texto_a_escribir.replace('\t', '    ')
 
     for linea in texto_limpio.splitlines():
         linea = linea.strip()
@@ -28,6 +28,6 @@ def exportar_reporte_a_pdf(texto_reporte: str, ruta_salida: str = "reporte_depen
         tramos = textwrap.wrap(linea, width=90, break_long_words=True)
         
         for tramo in tramos:
-            pdf.cell(0, 6, txt=tramo, new_x="LMARGIN", new_y="NEXT") 
+            pdf.cell(0, 6, text=tramo, new_x="LMARGIN", new_y="NEXT") 
 
-    pdf.output(ruta_salida)
+    pdf.output(ruta_guardado)

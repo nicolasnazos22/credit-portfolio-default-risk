@@ -1,5 +1,5 @@
 import pytest
-from src.debuggear_dependencias_yaml import diagnostico_reglas_conflicto
+from src.debugger_dependencias_yaml import diagnostico_reglas_conflicto
 def test_vacio():
     assert diagnostico_reglas_conflicto({}) == []
 def test_lineal_sin_ciclo(): #a relacionado con b, b relacionado con c. a -> b -> c
