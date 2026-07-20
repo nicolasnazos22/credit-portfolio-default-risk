@@ -48,15 +48,15 @@ class Validador:
         return clientes.copy()
 
     def _construir_condiciones_validacion(self, clientes: pd.DataFrame, feature: str, validaciones: dict) -> list[pd.Series]:
-
+        es_nulo = clientes[feature].isna()
         condiciones_individuales = [
-            funcion_validacion(clientes, feature, validaciones[tipo_validacion])
+            funcion_validacion(clientes, feature, validaciones[tipo_validacion]) | es_nulo
             for tipo_validacion, funcion_validacion in REGLAS_VALIDACION_INDIVIDUAL.items()
             if tipo_validacion in validaciones
         ]
 
         condiciones_relacionales = [
-            REGLAS_VALIDACION_RELACIONES[relacion["type"]](clientes, feature, relacion)
+            REGLAS_VALIDACION_RELACIONES[relacion["type"]](clientes, feature, relacion) | es_nulo
             for relacion in [validaciones.get("relation")]
             if relacion
         ]
