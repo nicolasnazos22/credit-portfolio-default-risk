@@ -1,38 +1,24 @@
 from fastapi import FastAPI, HTTPException
+from app.services.factory_scoring_service import construir_scoring_service
 from pathlib import Path
 from app.services.ScoringService import ScoringService
 from app.schemas import CreditRiskRequest, CreditRiskResponse
 from contextlib import asynccontextmanager
-from app.config import RiskConfig
-import logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-#Paths:
-ROOT_PATH = Path(__file__).resolve().parent.parent
-MODEL_PATH = ROOT_PATH / "model"
 
-#voy a usar lifespan pattern
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    try:
-        app_config = RiskConfig()
-        app.state.scoring_service = ScoringService(model_path=MODEL_PATH, config = app_config)
-        logger.info("carga exitosa del modelo")
-    except Exception as e:
-        logger.error("fallo en la carga del modelo, procediendo a cerrar", exc_info=True)
-        raise e
+        # carga del modelo a la RAM al inicializar 
+    app.state.scoring_service = construir_scoring_service()
     yield
     app.state.scoring_service = None
 app = FastAPI(
     title="app de scoring de riesgo crediticio", 
     lifespan=lifespan
     )
+def get_scoring_service(request: Request) -> ScoringService:
+    return request.app.state.scoring_service
 @app.post("/calcular", response_model=CreditRiskResponse)
-async def calcular(request: CreditRiskRequest):
+def calcular(payload_cliente: CreditRiskRequest, servicio: ScoringService = Depends(get_scoring_service)):
     servicio =  getattr(app.state, "scoring_service", None)
-    if not servicio:
-        raise HTTPException(
-            status_code= 503, 
-            detail="problema cargando el modelo. Operacion abortada"
-            )
-    return servicio.predecir(request.model_dump())
+    datos_dict = payload_cliente.model_dump()
+    return servicio.predecir(datos_dict())

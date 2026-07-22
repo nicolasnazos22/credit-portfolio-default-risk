@@ -2,20 +2,14 @@ from app.services.interfaces import ModelPredictor, ModelExplainer, RiskClassifi
 import pandas as pd
 from app.schemas import CreditRiskResponse
 from app.preprocessor import Preprocessor
+from dataclasses import dataclass
+@dataclass(frozen=True)
 class ScoringService:
-    def __init__(
-        self, 
-        preprocesador, 
-        predictor: ModelPredictor,
-        clasificador: RiskClassifier,
-        explainer: ModelExplainer,
-        columnas_entrenamiento: list[str]
-    ):
-        self.preprocesador = preprocesador
-        self.predictor = predictor
-        self.clasificador = clasificador
-        self.explainer = explainer
-        self.columnas_entrenamiento = columnas_entrenamiento
+    preprocesador: Preprocessor
+    predictor: ModelPredictor
+    explainer: ModelExplainer
+    columnas_entrenamiento: list[str]
+    clasificador: RiskClassifier
 
     def predecir(self, payload_cliente: dict) -> CreditRiskResponse:
         df_crudo = pd.DataFrame([payload_cliente])
@@ -29,7 +23,7 @@ class ScoringService:
         # 3. Reglas de Negocio
         decision = self.clasificador.decision_binaria(proba)
         etiqueta = self.clasificador.clasificar_riesgo(proba)
-        
+
         # 4. Interpretabilidad
         explicacion = self.explainer.calcular_impacto(df_procesado, self.columnas_entrenamiento)
         
