@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, model_validator
 from enum import Enum
-from typing import Annotated
+from typing import Annotated, Literal
 from datetime import datetime
 #tipos enum primero:
 class HomeOwnership(str, Enum):
@@ -26,6 +26,11 @@ class LoanGrade(str, Enum):
 class CbDefaultOnFile(str, Enum):
     Y = "Y"
     N = "N"
+class EtiquetaRiesgo(str, Enum):
+    BAJA = "BAJA"
+    MEDIA = "MEDIA"
+    ALTA = "ALTA"
+
 Proba = Annotated[float, Field(ge=0.0, le=1.0)]
 class CreditRiskRequest(BaseModel):
     person_age: Annotated[int, Field(ge=18, le=100)]
@@ -51,11 +56,11 @@ class CreditRiskRequest(BaseModel):
 
 class CreditRiskResponse(BaseModel):
     probabilidad_default: Annotated[float, Field(ge=0.0, le=1.0, description="probabilidad inferida de caer en default")]
-    default_prediccion: Annotated[int, Field(description= "0 si no hay default, 1 si hay default. Binario")]
-    etiqueta_riesgo: Annotated[str, Field(description = "BAJA, MEDIA, ALTA")]
+    default_prediccion: Annotated[Literal[0, 1], Field(description= "0 si no hay default, 1 si hay default. Binario")]
+    etiqueta_riesgo: Annotated[EtiquetaRiesgo, Field(description = "BAJA, MEDIA, ALTA")]
     explicacion: Annotated[dict[str, float], Field(description="valores shap: atributos del cliente y su impacto en la prediccion")]
     @classmethod
-    def armar_respuesta(cls, probabilidad_default: float, etiqueta: str, prediccion_default: int, explicacion: dict[str, float]) -> "CreditRiskResponse":
+    def armar_respuesta(cls, probabilidad_default: float, etiqueta: EtiquetaRiesgo, prediccion_default: int, explicacion: dict[str, float]) -> "CreditRiskResponse":
         return cls(
             probabilidad_default = round(probabilidad_default, 4),
             default_prediccion = prediccion_default,
@@ -64,7 +69,6 @@ class CreditRiskResponse(BaseModel):
         )
 class PortfolioRiskSimulationRequest(BaseModel):
     # 1. Definimos el tipo base para las probabilidades
-    Proba: Annotated[float, Field(ge=0.0, le=1.0)]
     cantidad_escenarios: Annotated[
         int, Field(
             ge=1000, 
@@ -81,7 +85,7 @@ class PortfolioRiskSimulationRequest(BaseModel):
         )
     ]
 class PortfolioRiskSimulationResponse(BaseModel):
-    cantidad_simulaciones: int = Field(..., description="cantidad total de simulaciones")
+    cantidad_simulaciones: Annotated[int, Field(description="cantidad total de simulaciones")]
     var_95: Annotated[float, Field(ge=0.0, description="cantidad maxima de defaults en el 95% de los escenarios simulados")]
     cvar_95: Annotated[float, Field(ge=0.0, description="Media de defaults en el peor 5% de los escenarios")]
 
