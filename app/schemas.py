@@ -33,7 +33,7 @@ class EtiquetaRiesgo(str, Enum):
 
 Proba = Annotated[float, Field(ge=0.0, le=1.0)]
 class CreditRiskRequest(BaseModel):
-    person_age: Annotated[int, Field(ge=18, le=100)]
+    person_age: Annotated[int, Field(ge=18, le=100, description="edad del solicitante en años")]
     person_income: Annotated[int, Field(ge=10000, le=1000000, description="ingreso anual en USD")]
     person_home_ownership: HomeOwnership
     person_emp_length: Annotated[float, Field(ge=0, le=60, description="años de empleo")]
@@ -43,7 +43,7 @@ class CreditRiskRequest(BaseModel):
     loan_int_rate: Annotated[float, Field(ge=5.0, le=25.0, description="tasa de interes")]
     loan_percent_income: Annotated[float, Field(ge=0.0, le=1.0, description="ratio monto solicitado/ingresos anuales")]
     cb_person_cred_hist_length: Annotated[int, Field(ge=0, le=60, description="historial crediticio en años")]
-    cb_person_default_on_file: CbDefaultOnFile
+    cb_person_default_on_file: CbDefaultOnFile, Field(description="indica si el solicitante tiene registrado default previo en su historial")
     @model_validator(mode="after")
     def logica_negocio_valida(self):
         edad_laboral = self.person_age - 16
@@ -98,7 +98,7 @@ class PortfolioRiskSimulationResponse(BaseModel):
     )
             
 class Metricas(BaseModel):
-    timestamp: datetime
+    timestamp: Annotated[datetime, Field(description="momento en que las metricas del modelo fueron registradas")]
     recall_default: Annotated[float, Field(ge=0.0, le=1.0, description="sensibilidad sobre la clase default")]
     precision_default: Annotated[float, Field(ge=0.0, le=1.0, description="precision de deteccion de defaults")]
     pr_auc: Annotated[float, Field(ge=0.0, le=1.0, description="area bajo la curva precision-recall")]
