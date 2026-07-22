@@ -26,7 +26,7 @@ class LoanGrade(str, Enum):
 class CbDefaultOnFile(str, Enum):
     Y = "Y"
     N = "N"
-
+Proba = Annotated[float, Field(ge=0.0, le=1.0)]
 class CreditRiskRequest(BaseModel):
     person_age: Annotated[int, Field(ge=18, le=100)]
     person_income: Annotated[int, Field(ge=10000, le=1000000, description="ingreso anual en USD")]
