@@ -1,9 +1,9 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request, Depends
 from app.services.factory_scoring_service import construir_scoring_service
-from pathlib import Path
 from app.services.ScoringService import ScoringService
 from app.schemas import CreditRiskRequest, CreditRiskResponse
 from contextlib import asynccontextmanager
+from typing import Annotated, TypeAlias
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -17,8 +17,9 @@ app = FastAPI(
     )
 def get_scoring_service(request: Request) -> ScoringService:
     return request.app.state.scoring_service
+ScoringServiceDep: TypeAlias = Annotated[ScoringService, Depends(get_scoring_service)]
 @app.post("/calcular", response_model=CreditRiskResponse)
-def calcular(payload_cliente: CreditRiskRequest, servicio: ScoringService = Depends(get_scoring_service)):
+def calcular(payload_cliente: CreditRiskRequest, servicio: ScoringServiceDep):
     servicio =  getattr(app.state, "scoring_service", None)
     datos_dict = payload_cliente.model_dump()
-    return servicio.predecir(datos_dict())
+    return servicio.predecir(datos_dict)
