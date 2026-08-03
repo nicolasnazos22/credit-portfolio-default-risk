@@ -5,7 +5,6 @@ sys.path.insert(0, str(ROOT_PATH))
 import joblib
 import shap as sh
 import pandas as pd
-import matplotlib.pyplot as plt
 MODEL_PATH = Path(__file__).resolve().parent.parent / "model"
 def explicabilidad():
     try:

@@ -12,14 +12,17 @@ class ScoringService:
     clasificador: RiskClassifier
 
     def predecir(self, payload_cliente: dict) -> CreditRiskResponse:
-        df_crudo = pd.DataFrame([payload_cliente])
+        try:
+            df_crudo = pd.DataFrame([payload_cliente])
         
         # 1. Transformación
-        df_procesado = self.preprocesador.transformar(df_crudo)
+            df_procesado = self.preprocesador.transformar(df_crudo)
         
         # 2. Predicción Pura
-        proba = self.predictor.predecir_probabilidad(df_procesado)
-        
+            proba = self.predictor.predecir_probabilidad(df_procesado)
+        except Exception as error_librerias:
+            raise RuntimeError(f"Error procesando el modelo: {str(error_librerias)}")
+            
         # 3. Reglas de Negocio
         decision = self.clasificador.decision_binaria(proba)
         etiqueta = self.clasificador.clasificar_riesgo(proba)

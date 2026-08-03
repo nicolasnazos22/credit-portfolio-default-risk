@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from app.config import RiskConfig
+from app.schemas import EtiquetaRiesgo
 @dataclass(frozen=True)
 class RiskClassifier:
     configuracion: RiskConfig
@@ -7,7 +8,7 @@ class RiskClassifier:
         return 1 if proba >= self.configuracion.umbral_decision else 0
     def clasificar_riesgo(self, proba:float):
         if proba <= self.configuracion.umbral_bajo:
-            return "BAJA"
+            return EtiquetaRiesgo.BAJA
         elif self.configuracion.umbral_bajo < proba <= self.configuracion.umbral_medio:
-            return "MEDIA"
-        return "ALTA"
+            return EtiquetaRiesgo.MEDIA
+        return EtiquetaRiesgo.ALTA
