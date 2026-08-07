@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from app.config import RiskConfig
-from app.schemas import EtiquetaRiesgo
+from app.core.config import RiskConfig
+from app.domain.schemas import EtiquetaRiesgo
 @dataclass(frozen=True)
 class RiskClassifier:
     configuracion: RiskConfig

@@ -2,12 +2,12 @@ import joblib
 import shap as sh
 from pathlib import Path
 
-from app.config import RiskConfig
+from app.core.config import RiskConfig
 from app.services.SklearnPredictor import SklearnPredictor
 from app.services.ShapTreeExplainer import ShapTreeExplainer
 from app.services.Risk_classifier import RiskClassifier
 from app.services.ScoringService import ScoringService
-from app.preprocessor import Preprocessor
+from app.processing.preprocessor import Preprocessor
 
 # Rutas hardcodeadas. TODO: configurarlas desde variables de entorno
 BASE_DIR = Path("model")

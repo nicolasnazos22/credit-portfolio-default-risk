@@ -8,7 +8,7 @@ import pandas as pd
 from datetime import datetime
 import json
 MODEL_PATH = Path(__file__).resolve().parent.parent / "model"
-from app.schemas import Metricas
+from app.domain.schemas import Metricas
 UMBRAL = 0.50
 def evaluacion_modelo():
     modelo = joblib.load(MODEL_PATH / "modelo_scoring.joblib")

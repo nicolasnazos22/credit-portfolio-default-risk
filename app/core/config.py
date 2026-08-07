@@ -17,3 +17,4 @@ class ProcessingConfig(BaseSettings):
     limite_exp: int = 60
     class Config:
         env_prefix = "PREPROCESS_"
+        

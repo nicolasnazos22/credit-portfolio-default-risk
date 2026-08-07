@@ -1,6 +1,6 @@
 import pandas as pd
-from app.config import ProcessingConfig
-from app.validador import Validador
+from app.core.config import ProcessingConfig
+from app.processing.validador import Validador
 
 
 class Preprocessor:

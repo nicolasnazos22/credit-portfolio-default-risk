@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import pandas as pd
 import shap as sh
-from app.config import RiskConfig
+from app.core.config import RiskConfig
 
 @dataclass(frozen=True)
 class ShapTreeExplainer:

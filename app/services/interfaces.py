@@ -1,7 +1,7 @@
 from typing import Protocol
 import pandas as pd
-from app.schemas import CreditRiskResponse
-from app.config import RiskConfig
+from app.domain.schemas import CreditRiskResponse
+from app.core.config import RiskConfig
 
 class ModelPredictor(Protocol):
     def predecir_probabilidad(self, df_procesado: pd.DataFrame) -> float:

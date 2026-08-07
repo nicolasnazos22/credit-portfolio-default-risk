@@ -6,9 +6,9 @@ import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 import joblib
-from app.preprocessor import Preprocessor
-from app.config import ProcessingConfig
-from app.validador import Validador
+from app.processing.preprocessor import Preprocessor
+from app.core.config import ProcessingConfig
+from app.processing.validador import Validador
 from logging import getLogger, basicConfig, INFO
 import yaml
 
