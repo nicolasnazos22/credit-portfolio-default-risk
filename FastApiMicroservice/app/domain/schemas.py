@@ -43,7 +43,7 @@ class CreditRiskRequest(BaseModel):
     loan_int_rate: Annotated[float, Field(ge=5.0, le=25.0, description="tasa de interes")]
     loan_percent_income: Annotated[float, Field(ge=0.0, le=1.0, description="ratio monto solicitado/ingresos anuales")]
     cb_person_cred_hist_length: Annotated[int, Field(ge=0, le=60, description="historial crediticio en años")]
-    cb_person_default_on_file: CbDefaultOnFile, Field(description="indica si el solicitante tiene registrado default previo en su historial")
+    cb_person_default_on_file: Annotated[CbDefaultOnFile, Field(description="indica si el solicitante tiene registrado default previo en su historial")]
     @model_validator(mode="after")
     def logica_negocio_valida(self):
         edad_laboral = self.person_age - 16

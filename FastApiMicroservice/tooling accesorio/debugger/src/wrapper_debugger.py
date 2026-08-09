@@ -1,7 +1,7 @@
 import sys
-from .debugger_dependencias_yaml import diagnostico_reglas_conflicto
-from .formateador_reporte import formatear_reporte
-from .exportar_pdf import exportar_reporte_a_pdf
+from debugger_dependencias_yaml import diagnostico_reglas_conflicto
+from formateador_reporte import formatear_reporte
+from exportar_pdf import exportar_reporte_a_pdf
 import yaml
 
 def run(nombre_yaml: str) -> None:

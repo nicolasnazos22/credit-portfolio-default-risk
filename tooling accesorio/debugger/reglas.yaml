@@ -1,7 +1,0 @@
-a:
-  relation:
-    field: b
-
-b:
-  relation:
-    field: a
