@@ -77,6 +77,49 @@ X_score = preprocessor.transformar(new_customers_df)
 - pandas, numpy
 - app.core.config.ProcessingConfig
 
+## Testing
+
+The preprocessing pipeline is covered with a mix of example-based unit tests and property-based tests using Hypothesis.
+
+Unit tests cover specific business cases and interactions between `Preprocessor` and `Validador`. Property-based tests are used where the expected behaviour can be expressed as a property over a wider range of inputs.
+
+### Test doubles
+
+`Preprocessor` tests don't use the real validation rules. They use small test doubles for `Validador` instead:
+
+- `ValidadorFake`: lets the DataFrame through and records whether it was called.
+- `ValidadorQueFalla`: raises a `ValueError` so the tests can verify how `Preprocessor` handles validation failures.
+
+The point is to test `Preprocessor` without coupling those tests to the implementation of `Validador`.
+
+### Property-based testing
+
+Hypothesis strategies generate numeric, categorical and mixed DataFrames with different sizes and missing values.
+
+Some of the properties covered are:
+
+- Numeric columns don't contain `NaN` after imputation.
+- Missing categorical values are replaced with `"desconocido"`.
+- Encoding always produces `float32` columns.
+- In inference, the output contains exactly the features expected by the model.
+- Missing categorical features are filled with `0`.
+- Categorical columns that weren't present during training are discarded in inference.
+- `transformar()` doesn't mutate the input DataFrame.
+- The same input produces the same preprocessing output.
+
+The validator also has property-based tests that generate valid and invalid customer records from the validation rules defined in YAML, including relationships between fields.
+
+### Test structure
+
+```text
+tests/
+├── doubles/
+│   └── validador.py
+├── estrategias_dataframes.py
+├── factory_clientes.py
+├── test_preprocessor.py
+└── test_validador.py
+
 ## Notes
 - `config: ProcessingConfig` is received by `Preprocessor` but not actually used inside it — worth checking if that's dead code or a placeholder for something coming later.
 - `Validador.validar` doesn't log how many rows get dropped, which would probably be useful to monitor data quality once this runs in production.

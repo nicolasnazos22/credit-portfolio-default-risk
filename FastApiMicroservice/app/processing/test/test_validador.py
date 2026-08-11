@@ -1,9 +1,9 @@
 import pytest
 import pandas as pd 
 from hypothesis import given, settings, HealthCheck
-from app.processing.validador import Validador
-from factory_clientes import REGLAS
-from tests.estrategias import df_valido, df_invalido, df_con_indice, df_mixto, df_lista_mixta
+from app.processing.src.validador import Validador
+from app.processing.test.factory_clientes import REGLAS
+from app.processing.test.estrategias_clientes import df_valido, df_invalido, df_con_indice, df_mixto, df_lista_mixta
 #defino el escenario
 @pytest.fixture
 def validador():

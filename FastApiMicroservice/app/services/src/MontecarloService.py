@@ -13,6 +13,6 @@ class MontecarloService:
         cvar_95 = np.mean(peores_iteraciones) if len(peores_iteraciones) > 0 else 0.0
         return PortfolioRiskSimulationResponse.armar_respuesta(
             simulaciones = cantidad_escenarios,
-            var_95 = int(np.round(var_95))
+            var_95 = int(np.round(var_95)),
             cvar_95 = int(np.round(cvar_95))
         )

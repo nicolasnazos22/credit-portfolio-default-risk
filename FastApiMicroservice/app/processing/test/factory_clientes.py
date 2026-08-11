@@ -3,7 +3,7 @@ import numpy as np
 from hypothesis import strategies as st
 from hypothesis.strategies import composite
 import yaml
-PATH_YAML = Path(__file__).resolve().parent.parent / "app" / "reglas_validacion.yaml.txt"
+PATH_YAML =  Path(__file__).parent / "reglas_validacion.yaml"
 with open(PATH_YAML) as f:
     REGLAS = yaml.safe_load(f)["fields"]
 
