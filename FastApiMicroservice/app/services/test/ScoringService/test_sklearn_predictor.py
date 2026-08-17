@@ -17,7 +17,7 @@ import pandas as pd
 import pytest
 from hypothesis import given, strategies as st, settings
 
-from app.services.SklearnPredictor import SklearnPredictor
+from app.services.src.SklearnPredictor import SklearnPredictor
 
 
 class _ModeloFake:
@@ -36,9 +36,8 @@ def _df_una_fila():
     return pd.DataFrame([{"f1": 1.0, "f2": 2.0}])
 
 
-# ---------------------------------------------------------------------------
 # Property-based: bajo el contrato asumido, el resultado es correcto
-# ---------------------------------------------------------------------------
+
 
 @settings(max_examples=200)
 @given(p=st.floats(min_value=0.0, max_value=1.0, allow_nan=False, allow_infinity=False))
@@ -78,10 +77,7 @@ def test_pasa_el_dataframe_completo_al_modelo_sin_transformarlo():
     predictor.predecir_probabilidad(df)
     assert modelo.llamadas[0] is df
 
-
-# ---------------------------------------------------------------------------
 # Caracterización: violaciones del contrato asumido
-# ---------------------------------------------------------------------------
 
 def test_predict_proba_con_una_sola_columna_lanza_indexerror():
     """Si el modelo no es un clasificador binario 'de manual' (ej. devuelve una
@@ -111,10 +107,8 @@ def test_predict_proba_multiclase_toma_la_columna_1_sin_avisar():
     resultado = predictor.predecir_probabilidad(_df_una_fila())
     assert resultado == pytest.approx(0.5)  # "funciona" pero es semánticamente incorrecto
 
-
-# ---------------------------------------------------------------------------
 # Contrato de inmutabilidad (dataclass frozen)
-# ---------------------------------------------------------------------------
+
 
 def test_es_inmutable():
     predictor = SklearnPredictor(modelo=_ModeloFake([[0.5, 0.5]]))

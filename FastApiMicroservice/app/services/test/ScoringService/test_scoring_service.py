@@ -25,8 +25,8 @@ import pandas as pd
 import pytest
 from hypothesis import given, strategies as st, settings, HealthCheck
 
-import app.services.ScoringService as scoring_service_module
-from app.services.ScoringService import ScoringService
+import app.services.src.ScoringService as scoring_service_module
+from app.services.src.ScoringService import ScoringService
 
 
 class _FakePreprocesador:
@@ -59,10 +59,8 @@ def credit_risk_response_mock(monkeypatch):
     monkeypatch.setattr(scoring_service_module, "CreditRiskResponse", fake_cls)
     return fake_cls
 
-
-# ---------------------------------------------------------------------------
 # Orquestación: quién recibe qué, y en qué orden
-# ---------------------------------------------------------------------------
+
 
 def test_arma_un_dataframe_de_una_fila_a_partir_del_payload(credit_risk_response_mock):
     preproc = _FakePreprocesador()
@@ -140,9 +138,8 @@ def test_arma_la_respuesta_con_los_kwargs_correctos(credit_risk_response_mock):
     }
 
 
-# ---------------------------------------------------------------------------
 # Manejo de errores: cualquier falla de cualquier colaborador -> RuntimeError
-# ---------------------------------------------------------------------------
+
 
 class _ErrorDePrueba(Exception):
     pass

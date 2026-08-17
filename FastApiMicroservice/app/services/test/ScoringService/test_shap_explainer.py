@@ -28,7 +28,7 @@ import pandas as pd
 import pytest
 from hypothesis import given, strategies as st, settings
 
-from app.services.ShapTreeExplainer import ShapTreeExplainer
+from app.services.src.ShapTreeExplainer import ShapTreeExplainer
 
 
 @dataclass(frozen=True)
@@ -50,10 +50,7 @@ def _columnas(n):
     return [f"f{i}" for i in range(n)]
 
 
-# ---------------------------------------------------------------------------
 # Property-based: selección de top-k por impacto absoluto
-# ---------------------------------------------------------------------------
-
 @settings(max_examples=200)
 @given(
     impactos=st.lists(
@@ -137,9 +134,8 @@ def test_empates_en_impacto_absoluto_desempatan_por_orden_original():
     assert set(resultado.keys()) == {"a", "b"}  # "a" antes que "c" por orden original
 
 
-# ---------------------------------------------------------------------------
 # El match/case: qué formas de valores_shap toma cada rama
-# ---------------------------------------------------------------------------
+
 
 def test_lista_de_dos_arrays_toma_la_segunda_como_clase_positiva():
     """Forma clásica de shap<0.45 para TreeExplainer en clasificación binaria:
