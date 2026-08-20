@@ -6,14 +6,14 @@ import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 import joblib
-from app.processing.preprocessor import Preprocessor
-from app.core.config import ProcessingConfig
-from app.processing.validador import Validador
+from app.processing.src.preprocessor import Preprocessor
+from app.core.config import ProcessingConfig, RiskConfig
+from app.processing.src.validador import Validador
 from logging import getLogger, basicConfig, INFO
 import yaml
 
 PATH_ROOT = Path(__file__).resolve().parent.parent
-PATH_YAML = PATH_ROOT / "app" / "reglas_validacion.yaml.txt"
+PATH_YAML = PATH_ROOT / "app" / "domain" / "reglas_validacion.yaml"
 PATH_DATA = PATH_ROOT / "data"
 PATH_CSV = PATH_DATA / "credit_risk_dataset.csv"
 PATH_MODEL = PATH_ROOT / "model"
@@ -27,6 +27,7 @@ def entrenar_modelo():
     )
     medianas = datos_training_crudos.select_dtypes(include="number").median() #calculo la mediana que voy a usar para imputar despues de hacer el split para prevenir data leakage
     config = ProcessingConfig()
+    risk_config = RiskConfig()
     with open(PATH_YAML) as f:
         reglas = yaml.safe_load(f)
     validador = Validador(atributos=reglas)
@@ -58,7 +59,7 @@ def entrenar_modelo():
     modelo = xgb.XGBClassifier(n_estimators=100, max_depth=5, learning_rate=0.1, monotone_constraints = monotonic_tuple, eval_metric='logloss', scale_pos_weight=neg/pos, random_state=42)
     modelo.fit(feature_matrix, target_training)
     predicciones_test = modelo.predict_proba(features_test)[:,1]
-    predicciones_test = (predicciones_test >= config.umbral_decision).astype(int)
+    predicciones_test = (predicciones_test >= risk_config.umbral_decision).astype(int)
     reporte = classification_report(target_test, predicciones_test)
     with open(PATH_MODEL / "metricas_evaluacion.txt", "w") as f:
         f.write(reporte)

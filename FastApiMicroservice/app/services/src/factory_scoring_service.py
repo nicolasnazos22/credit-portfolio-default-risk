@@ -2,18 +2,19 @@ import joblib
 import shap as sh
 from pathlib import Path
 
-from app.core.config import RiskConfig
-from app.services.SklearnPredictor import SklearnPredictor
-from app.services.ShapTreeExplainer import ShapTreeExplainer
-from app.services.Risk_classifier import RiskClassifier
-from app.services.ScoringService import ScoringService
-from app.processing.preprocessor import Preprocessor
+from app.core.config import RiskConfig, ProcessingConfig
+from app.services.src.SklearnPredictor import SklearnPredictor
+from app.services.src.ShapTreeExplainer import ShapTreeExplainer
+from app.services.src.Risk_classifier import RiskClassifier
+from app.services.src.ScoringService import ScoringService
+from app.processing.src.preprocessor import Preprocessor
 
 # Rutas hardcodeadas. TODO: configurarlas desde variables de entorno
 BASE_DIR = Path("model")
 MODEL_PATH = BASE_DIR / "modelo_scoring.joblib"
 CONFIG_PATH = BASE_DIR / "config.joblib"
 MEDIANAS_PATH = BASE_DIR / "medianas.joblib"
+COLUMNAS_PATH = BASE_DIR / "columnas_dataset.joblib"
 """
 aca ocurre la magia. Basicamente el siguiente metodo crea el scoring service inyectandole todas sus dependencias
 Se ejecuta durante el lifespan de fastapi
@@ -22,12 +23,14 @@ Se ejecuta durante el lifespan de fastapi
 """
 def construir_scoring_service() -> ScoringService:
     # instancio la configuracion definida 
-    config = RiskConfig()
+    processing_config  = ProcessingConfig()
+    risk_config = RiskConfig()
     
     # 1. Carga de artefactos
     modelo_nativo = joblib.load(MODEL_PATH)
     config = joblib.load(CONFIG_PATH)
     medianas = joblib.load(MEDIANAS_PATH)
+    columnas_entrenamiento = joblib.load(COLUMNAS_PATH)
     
     # 2. instancio el explainer de shap
     explainer_nativo = sh.TreeExplainer(modelo_nativo)
@@ -37,11 +40,11 @@ def construir_scoring_service() -> ScoringService:
     
     explainer = ShapTreeExplainer(
         explainer=explainer_nativo, 
-        config=config
+        config=risk_config
     )
-    preprocesador = Preprocessor(medianas=medianas, config=config) 
-    clasificador = RiskClassifier(configuracion=config)
-    columnas_entrenamiento = list(preprocesador.feature_names_in_)
+    preprocesador = Preprocessor.para_inferencia(features=columnas_entrenamiento, medianas=medianas, config=processing_config) 
+    clasificador = RiskClassifier(configuracion=risk_config)
+    
     
     # 4. Inyección de dependencias
     return ScoringService(

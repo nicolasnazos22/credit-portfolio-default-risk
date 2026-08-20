@@ -1,7 +1,7 @@
-from app.services.interfaces import ModelPredictor, ModelExplainer, RiskClassifier
+from app.services.src.interfaces import ModelPredictor, ModelExplainer, RiskClassifier
 import pandas as pd
 from app.domain.schemas import CreditRiskResponse
-from app.processing.preprocessor import Preprocessor
+from app.processing.src.preprocessor import Preprocessor
 from dataclasses import dataclass
 
 @dataclass(frozen=True)

@@ -1,0 +1,12 @@
+data/
+tests/
+tooling accesorio/
+conftest.py
+.git
+.gitignore
+.pytest_cache
+.hypothesis
+__pycache__
+*.pyc
+*.pyo
+*.pyd

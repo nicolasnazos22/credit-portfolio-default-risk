@@ -11,12 +11,12 @@ de cada pieza (eso ya lo cubren los demás archivos de test).
 """
 from unittest.mock import MagicMock, call
 
-import app.services.factory_scoring_service as factory_module
-from app.services.factory_scoring_service import construir_scoring_service, MODEL_PATH, CONFIG_PATH, MEDIANAS_PATH
-from app.services.SklearnPredictor import SklearnPredictor
-from app.services.ShapTreeExplainer import ShapTreeExplainer
-from app.services.Risk_classifier import RiskClassifier
-from app.services.ScoringService import ScoringService
+import app.services.src.factory_scoring_service as factory_module
+from app.services.src.factory_scoring_service import construir_scoring_service, MODEL_PATH, CONFIG_PATH, MEDIANAS_PATH
+from app.services.src.SklearnPredictor import SklearnPredictor
+from app.services.src.ShapTreeExplainer import ShapTreeExplainer
+from app.services.src.Risk_classifier import RiskClassifier
+from app.services.src.ScoringService import ScoringService
 
 
 def test_carga_los_tres_artefactos_desde_las_rutas_declaradas(monkeypatch):

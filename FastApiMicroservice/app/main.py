@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, Depends
-from app.services.factory_scoring_service import construir_scoring_service
-from app.services.ScoringService import ScoringService
-from app.services.MontecarloService import MontecarloService
+from app.services.src.factory_scoring_service import construir_scoring_service
+from app.services.src.ScoringService import ScoringService
+from app.services.src.MontecarloService import MontecarloService
 from app.domain.schemas import CreditRiskRequest, CreditRiskResponse, PortfolioRiskSimulationRequest, PortfolioRiskSimulationResponse
 from contextlib import asynccontextmanager
 from typing import Annotated, TypeAlias
