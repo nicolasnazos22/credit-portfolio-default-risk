@@ -116,3 +116,9 @@ This README covers the service as a whole. For details on specific pieces:
 * Classifier and explainer errors get caught and re-raised as a single `RuntimeError` in `ScoringService.predecir`. This means the API layer doesn't have to know about every exception that sklearn or SHAP might throw.
 
 * Business rules (decision threshold, risk buckets) live entirely in `RiskClassifier`, separate from the model on purpose. The model gives you a number. Deciding what that number means for the business is a different job, and I wanted that logic to be testable on its own without dragging sklearn into it.
+
+## How to run it
+1. git clone https://github.com/nicolasnazos22/credit-portfolio-default-risk.git
+2. cd credit-portfolio-default-risk/FastApiMicroservice
+3. docker build -t credit-risk-api
+4. docker run --rm -p 8000:8000 credit-risk-api
