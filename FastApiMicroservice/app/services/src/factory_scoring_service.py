@@ -28,7 +28,6 @@ def construir_scoring_service() -> ScoringService:
     
     # 1. Carga de artefactos
     modelo_nativo = joblib.load(MODEL_PATH)
-    config = joblib.load(CONFIG_PATH)
     medianas = joblib.load(MEDIANAS_PATH)
     columnas_entrenamiento = joblib.load(COLUMNAS_PATH)
     
