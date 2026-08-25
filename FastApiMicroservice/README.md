@@ -120,6 +120,6 @@ This README covers the service as a whole. For details on specific pieces:
 ## How to run it
 1. git clone https://github.com/nicolasnazos22/credit-portfolio-default-risk.git
 2. cd credit-portfolio-default-risk/FastApiMicroservice
-3. docker build -t credit-risk-api
+3. docker build -t credit-risk-api .
 4. docker run --rm -p 8000:8000 credit-risk-api
 5. Open http://localhost:8000/docs to access the interactive Swagger UI and test the API endpoints
