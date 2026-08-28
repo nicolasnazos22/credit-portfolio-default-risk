@@ -9,12 +9,13 @@ import java.time.Instant;
 @Entity
 @Table(name = "credit_inferences")
 public class CreditInference{
-    @Id 
+    @Id
     private UUID requestId;
 
     @Column(nullable = false)
     private Long userId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusInferencia status;
 
@@ -25,16 +26,21 @@ public class CreditInference{
     @Column(name= "etiqueta_riesgo")
     private EtiquetaRiesgo etiquetaRiesgo;
 
-    @enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(name= "decision_final")
     private DecisionCredito decisionFinal;
 
     @Column(name="created_at", updatable = false)
     private Instant createdAt;
     
+    @OneToOne(mappedBy = "inference",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private CreditInferenceFeatures features;
+    
     protected CreditInference() {
     } 
-    public CreditInference(UUID requestId, Long userId, String status, Double probabilidadDefault, EtiquetaRiesgo etiquetaRiesgo, DecisionCredito decisionFinal, Instant createdAt) {
+    public CreditInference(UUID requestId, Long userId) {
         this.requestId = requestId;
         this.userId = userId;
         this.status = StatusInferencia.PENDIENTE;
@@ -44,15 +50,15 @@ public class CreditInference{
     public void otorgarCredito(int prediccionModelo, double ProbabilidadDefault, EtiquetaRiesgo etiquetaRiesgo) {
         this.probabilidadDefault = ProbabilidadDefault;
         this.etiquetaRiesgo = etiquetaRiesgo;
-        this.DecisionFinal = (prediccionModelo == 1) ? DecisionCredito.ACEPTADO : DecisionCredito.RECHAZADO;
-        this.status = StatusInferencia.COMPLETADO
+        this.decisionFinal = (prediccionModelo == 1) ? DecisionCredito.ACEPTADO : DecisionCredito.RECHAZADO;
+        this.status = StatusInferencia.COMPLETADO;
     }
     public UUID getRequestId() { return requestId; }
     
     public Long getUserId() { return userId; }
     
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public StatusInferencia getStatus() { return status; }
+    public void setStatus(StatusInferencia status) { this.status = status; }
     
     public Double getProbabilidadDefault() { return probabilidadDefault; }
     public void setProbabilidadDefault(Double probabilidadDefault) { this.probabilidadDefault = probabilidadDefault; }
@@ -63,4 +69,10 @@ public class CreditInference{
     public DecisionCredito getDecisionFinal() { return decisionFinal; }
     
     public Instant getCreatedAt() { return createdAt; }
+    public void setFeatures(CreditInferenceFeatures features) {
+        this.features = features;
+    }
+    public void getFeatures() {
+        return features;
+    }
 }
